@@ -1,6 +1,6 @@
 'use client'
 import React, {useEffect} from 'react';
-import {useForm, SubmitHandler} from 'react-hook-form'
+import {SubmitHandler, useForm} from 'react-hook-form'
 import {LoginRequest} from '@/types';
 import {useLoginMutation} from '@/mutations';
 import {useRouter} from 'next/navigation';
@@ -11,19 +11,6 @@ const AuthPage = () => {
 
     const loginMutation = useLoginMutation();
     const router = useRouter();
-    useEffect(() => {
-        const checkAuth = async () => {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                try {
-                    await router.push('/');
-                } catch (error) {
-                    console.error('Ошибка перенаправления:', error);
-                }
-            }
-        };
-        checkAuth();
-    }, [router]);
 
 
     const onSubmit: SubmitHandler<LoginRequest> = (data) => {
@@ -35,12 +22,31 @@ const AuthPage = () => {
 
                 // Сохраните токен в localStorage или в cookie, если необходимо
                 localStorage.setItem('authToken', response.token);
+
+                // Перенаправьте пользователя на домашнюю страницу
+                router.push('/');
             },
             onError: (error) => {
                 console.error('Ошибка авторизации:', error.message);
             },
         });
     };
+
+
+    // useEffect(() => {
+    //     const checkAuth = async () => {
+    //         const token = localStorage.getItem('authToken');
+    //         if (token) {
+    //             try {
+    //                 debugger
+    //                 await router.push('/');
+    //             } catch (error) {
+    //                 console.error('Ошибка перенаправления:', error);
+    //             }
+    //         }
+    //     };
+    //     checkAuth();
+    // }, [router]);
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <input value="johnd" className="bg-blue-300 p-2 border border-gray-300 rounded"
